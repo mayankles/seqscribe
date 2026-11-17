@@ -1,0 +1,43 @@
+# seqscribe settings. Profiles are selected with the R_CONFIG_ACTIVE
+# environment variable; every profile inherits from "default".
+# Personal overrides go in config.local.yml in the working directory (not
+# committed). The API key, if any, goes in SEQSCRIBE_LLM_API_KEY.
+
+default:
+  llm:
+    base_url: "http://localhost:1234/v1"   # LM Studio's default local server
+    model: "openai/gpt-oss-20b"
+    api_key: ""                            # most local servers need none
+    context_length: 16384                  # informational; set in the server
+    temperature: 0
+    stream: false                          # false = wait for the full reply. Safer with
+                                           # tool calling on local servers; try true later.
+  paths:
+    projects_dir: "projects"               # where analysis projects are created
+    prompts_dir: ""                        # empty = use the packaged prompts
+    templates_dir: ""                      # empty = use the packaged templates
+  library:
+    user_dirs: []                          # extra library folders; later ones override earlier
+    max_tools_in_context: 30               # above this, filter/search before offering tools
+  mode: "open"                             # "guided" = library functions only;
+                                           # "open" = custom code blocks also allowed
+  executor:
+    type: "local"                          # "local" or, later, "slurm"
+  workflows:
+    default: "bulk_rnaseq"
+  safety:
+    review_custom_code: true               # always show LLM-written code first
+    send_raw_data_to_llm: false            # must stay false
+
+local:
+  # Development on the Mac. Inherits everything else from default.
+  executor:
+    type: "local"
+
+hpc:
+  # Placeholder until cluster details are known (docs/hpc-questions.md).
+  # Working assumption: the LLM server runs on the same node as the app.
+  llm:
+    base_url: "http://localhost:8080/v1"
+  paths:
+    projects_dir: "~/seqscribe_projects"

@@ -1,0 +1,35 @@
+name: run_deseq2
+version: 0.1.0
+title: Differential expression (DESeq2)
+summary: Run DESeq2 and test one contrast between two levels of the condition, adjusting for the covariates in the design.
+tags: [differential expression, deseq2, contrast, de]
+workflow: [bulk_rnaseq]
+step: de
+description: >
+  Fits the DESeq2 model with the design from the sample table and extracts
+  results for numerator versus denominator. Positive log2 fold change means
+  higher in the numerator group.
+requires: [DESeq2]
+inputs: [dds]
+params:
+  - name: numerator
+    type: string
+    required: true
+    source: condition_levels
+    description: Condition level of interest (for example the treated group).
+  - name: denominator
+    type: string
+    required: true
+    source: condition_levels
+    description: Condition level to compare against (for example the control group).
+  - name: alpha
+    type: number
+    default: 0.05
+    min: 0.0001
+    max: 0.5
+    description: Adjusted p-value threshold for calling a gene significant.
+produces: [dds, de_results]
+methods_text: >
+  Differential expression was tested with DESeq2 for {{numerator}} versus
+  {{denominator}}, using the Wald test and Benjamini-Hochberg adjustment.
+  Genes with adjusted p-value below {{alpha}} were called significant.

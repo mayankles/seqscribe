@@ -1,0 +1,13 @@
+name: plot_library_sizes
+version: 0.1.0
+title: Library sizes
+summary: Bar plot of total read counts per sample, to spot samples with unusually low sequencing depth.
+tags: [qc, library size, depth, reads]
+workflow: [bulk_rnaseq]
+step: qc
+description: Total counts per sample in millions, coloured by condition.
+requires: [ggplot2]
+inputs: [counts, sample_table]
+params: []
+produces: []
+methods_text: Library sizes were computed as the total read count per sample.

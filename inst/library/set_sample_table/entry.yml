@@ -1,0 +1,34 @@
+name: set_sample_table
+version: 0.1.0
+title: Build the sample table
+summary: Build the simplified sample table by choosing which metadata column is the condition, its reference level, covariates to adjust for, and samples to exclude.
+tags: [metadata, samples, design, condition, covariate, batch, exclude]
+workflow: [bulk_rnaseq]
+step: metadata
+description: >
+  Creates the sample table used by every later step. Checks that samples match
+  the counts matrix, that each group has replicates, and that the design is
+  not confounded.
+requires: []
+inputs: [raw_metadata, counts]
+params:
+  - name: condition_column
+    type: string
+    required: true
+    source: raw_metadata_columns
+    description: Metadata column holding the main comparison (for example treatment).
+  - name: reference_level
+    type: string
+    description: Value of the condition column to use as the baseline or control group.
+  - name: covariates
+    type: string_list
+    source: raw_metadata_columns
+    description: Metadata columns to adjust for, such as batch, donor or cell line. Leave empty for none.
+  - name: exclude_samples
+    type: string_list
+    source: sample_ids
+    description: Sample IDs to leave out of the analysis. Leave empty to keep all.
+produces: [sample_table]
+methods_text: >
+  Samples were grouped by {{condition_column}} (reference level: {{reference_level}}).
+  Covariates included in the design: {{covariates}}. Excluded samples: {{exclude_samples}}.

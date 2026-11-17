@@ -1,0 +1,24 @@
+name: build_dds
+version: 0.1.0
+title: Build the dataset and filter low counts
+summary: Combine counts and the sample table into a DESeq2 dataset with the design from the sample table, and remove genes with very low counts. Needed before PCA, correlation and differential expression.
+tags: [design, filter, low counts, dataset, deseq2]
+workflow: [bulk_rnaseq]
+step: design
+description: >
+  Builds a DESeqDataSet using the design "~ covariates + condition" and keeps
+  genes with at least min_count reads in at least as many samples as the
+  smallest group.
+requires: [DESeq2]
+inputs: [counts, sample_table]
+params:
+  - name: min_count
+    type: integer
+    default: 10
+    min: 0
+    max: 1000
+    description: Minimum read count a gene needs in enough samples to be kept.
+produces: [dds]
+methods_text: >
+  A DESeq2 dataset was built from the included samples. Genes with fewer than
+  {{min_count}} reads in the smallest group's number of samples were removed.

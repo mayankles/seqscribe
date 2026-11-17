@@ -1,0 +1,15 @@
+name: plot_sample_correlation
+version: 0.1.0
+title: Sample correlation heatmap
+summary: Heatmap of sample-to-sample correlation on variance-stabilised counts, to check replicate similarity and spot outlier samples.
+tags: [qc, correlation, heatmap, outliers, replicates]
+workflow: [bulk_rnaseq]
+step: qc
+description: Pearson correlation between samples, clustered.
+requires: [DESeq2, ggplot2, SummarizedExperiment]
+inputs: [dds]
+params: []
+produces: []
+methods_text: >
+  Sample-to-sample Pearson correlations were computed on variance-stabilised
+  counts and clustered hierarchically.

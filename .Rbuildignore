@@ -1,0 +1,9 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^CLAUDE\.md$
+^docs$
+^app\.R$
+^LICENSE\.md$
+^projects$
+^scratch$
+^config\.local\.yml$

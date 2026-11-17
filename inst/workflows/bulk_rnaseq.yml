@@ -1,0 +1,24 @@
+# Ordered steps for the bulk RNA-seq workflow. The step navigator is generated
+# from this file; the functions shown under each step are the library entries
+# whose `step` field matches the step id. Steps are a guide, not a gate.
+name: bulk_rnaseq
+title: Bulk RNA-seq differential expression
+steps:
+  - id: import
+    title: Data import
+    description: Load a counts matrix and its sample metadata.
+  - id: metadata
+    title: Sample table
+    description: Choose the condition, covariates and samples to keep.
+  - id: design
+    title: Design and filtering
+    description: Build the dataset with its design and filter low counts.
+  - id: qc
+    title: Quality control
+    description: Library sizes, PCA, sample correlation.
+  - id: de
+    title: Differential expression
+    description: Test contrasts and view results.
+  - id: report
+    title: Report
+    description: Choose result blocks and build the report.

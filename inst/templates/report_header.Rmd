@@ -1,0 +1,8 @@
+---
+title: "{{report_title}}"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+<!-- Report skeleton. Result blocks from library entries (each entry's
+     report.Rmd) are appended below in the order chosen by the user. -->

@@ -1,0 +1,32 @@
+name: plot_pca
+version: 0.2.0
+title: PCA of samples
+summary: Principal component plot of samples to check grouping, outliers and batch effects.
+tags: [qc, pca, outliers, batch, exploratory]
+workflow: [bulk_rnaseq]
+step: qc
+description: >
+  Principal component analysis of variance-stabilised counts, to check that
+  samples group as expected and to spot outliers or batch effects.
+requires: [DESeq2, ggplot2, rlang]
+inputs: [dds]
+params:
+  - name: color_by
+    type: string
+    source: sample_table_columns
+    default: condition
+    description: Sample table column used to colour the points.
+  - name: shape_by
+    type: string
+    source: sample_table_columns
+    description: Optional sample table column used for point shape.
+  - name: ntop
+    type: integer
+    default: 500
+    min: 100
+    max: 5000
+    description: Number of most variable genes to use.
+produces: []
+methods_text: >
+  Principal component analysis was performed on variance-stabilised counts of
+  the {{ntop}} most variable genes.

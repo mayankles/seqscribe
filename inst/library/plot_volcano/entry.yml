@@ -1,0 +1,27 @@
+name: plot_volcano
+version: 0.1.0
+title: Volcano plot
+summary: Volcano plot of the most recent differential expression results, highlighting genes that pass the significance and fold-change thresholds.
+tags: [differential expression, volcano, plot, de]
+workflow: [bulk_rnaseq]
+step: de
+description: Log2 fold change against adjusted p-value for every tested gene.
+requires: [ggplot2]
+inputs: [de_results]
+params:
+  - name: alpha
+    type: number
+    default: 0.05
+    min: 0.0001
+    max: 0.5
+    description: Adjusted p-value threshold.
+  - name: lfc_threshold
+    type: number
+    default: 1
+    min: 0
+    max: 10
+    description: Absolute log2 fold change threshold.
+produces: []
+methods_text: >
+  Genes with adjusted p-value below {{alpha}} and absolute log2 fold change
+  above {{lfc_threshold}} were highlighted.

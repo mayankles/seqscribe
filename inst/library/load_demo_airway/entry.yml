@@ -1,0 +1,18 @@
+name: load_demo_airway
+version: 0.1.0
+title: Load the airway demo data
+summary: Load the airway demo counts matrix and its raw sample metadata. Takes no arguments. Run this first.
+tags: [import, demo, counts, metadata]
+workflow: [bulk_rnaseq]
+step: import
+description: >
+  Loads gene-level read counts and sample metadata for the airway experiment
+  (GSE52778) from the Bioconductor airway package.
+requires: [airway, SummarizedExperiment]
+inputs: []
+params: []
+produces: [counts, raw_metadata]
+methods_text: >
+  Gene-level read counts and sample metadata for the airway smooth muscle
+  dexamethasone experiment (GEO GSE52778) were loaded from the Bioconductor
+  airway package.

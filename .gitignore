@@ -1,0 +1,13 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.DS_Store
+*.Rproj
+renv/library/
+# user-level overrides and secrets
+config.local.yml
+.Renviron
+# analysis projects created while testing the app
+projects/
+scratch/

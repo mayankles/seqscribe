@@ -1,0 +1,2 @@
+<!-- Optional custom report fragment for plot_pca. Not used by the prototype
+     report builder yet, which generates a standard block for every step. -->

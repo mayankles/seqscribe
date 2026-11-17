@@ -1,0 +1,39 @@
+Package: seqscribe
+Title: A Plain-Language Analysis Workbench for Sequencing Data
+Version: 0.0.0.9000
+Authors@R:
+    person("Mayank", "Tandon", email = "mtandon09@gmail.com", role = c("aut", "cre"))
+Description: A Shiny workbench that lets an analyst direct routine
+    bioinformatics analyses in plain language. A locally hosted large language
+    model translates requests into calls to a library of standardised analysis
+    functions, recorded in a validated analysis specification from which
+    scripts and R Markdown reports are rendered. Bulk RNA-seq is the first
+    supported workflow.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends:
+    R (>= 4.3.0)
+Imports:
+    bslib,
+    config,
+    ellmer (>= 0.4.0),
+    ggplot2,
+    httr2,
+    jsonlite,
+    knitr,
+    promises,
+    rlang,
+    shiny,
+    shinychat (>= 0.3.0),
+    yaml
+Suggests:
+    airway,
+    callr,
+    DESeq2,
+    pkgload,
+    rmarkdown,
+    SummarizedExperiment,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
