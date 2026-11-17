@@ -19,6 +19,7 @@ new_state <- function(cfg, entries) {
   state$cfg <- cfg
   state$entries <- entries
   state$objects <- list()
+  state$derived_from <- list()
   state$steps <- list()
   state$project_dir <- normalizePath(project_dir)
   state$workflow <- cfg$workflows$default %||% "bulk_rnaseq"
@@ -178,7 +179,25 @@ run_step <- function(state, fn, params = list(), session = NULL) {
     ))
   }
 
-  for (obj in names(out$objects)) state$objects[[obj]] <- out$objects[[obj]]
+  # Store what the step produced. If it replaced an existing object, drop
+  # everything derived from the old one, so no later step can use stale data.
+  produced <- names(out$objects)
+  replaced <- intersect(produced, names(state$objects))
+  dropped <- setdiff(dependents(state$derived_from, replaced), produced)
+  for (obj in produced) {
+    # An object updated from itself (dds in run_deseq2) keeps its ancestry.
+    kept <- if (obj %in% entry$inputs) state$derived_from[[obj]]
+    state$derived_from[[obj]] <- union(setdiff(entry$inputs, obj), kept)
+    state$objects[[obj]] <- out$objects[[obj]]
+  }
+  state$objects[dropped] <- NULL
+  state$derived_from[dropped] <- NULL
+  if (length(dropped) > 0) {
+    notify(session, paste0(
+      fn, " replaced ", paste(replaced, collapse = ", "), "; removed out-of-date: ",
+      paste(dropped, collapse = ", "), "."
+    ), type = "warning")
+  }
   file.copy(entry$file,
             file.path(state$project_dir, "scripts", "library", paste0(fn, ".R")),
             overwrite = TRUE)
@@ -193,6 +212,7 @@ run_step <- function(state, fn, params = list(), session = NULL) {
     layer = entry$layer,
     params = params,
     summary = out$summary,
+    invalidated = dropped,
     plot = plot_rel,
     table = table_rel,
     table_html = table_html,
@@ -208,10 +228,31 @@ run_step <- function(state, fn, params = list(), session = NULL) {
     writeLines(build_script(state), file.path(state$project_dir, "scripts", "run_all.R"))
   }, error = function(e) notify(session, paste("Could not save project files:", conditionMessage(e)), type = "warning"))
 
-  list(
-    ok = TRUE, error = NULL, step = step,
-    for_llm = list(status = "ok", step_id = step_id, result = out$summary)
-  )
+  for_llm <- list(status = "ok", step_id = step_id, result = out$summary)
+  if (length(dropped) > 0) {
+    for_llm$removed_objects <- as.list(dropped)
+    for_llm$note <- paste(
+      "These objects were out of date and have been removed.",
+      "Rebuild them before any step that needs them."
+    )
+  }
+  list(ok = TRUE, error = NULL, step = step, for_llm = for_llm)
+}
+
+#' Objects derived, directly or indirectly, from any of `objs`
+#'
+#' @param derived_from Named list: object name -> names of the objects it was
+#'   made from.
+#' @noRd
+dependents <- function(derived_from, objs) {
+  found <- character()
+  repeat {
+    hit <- vapply(derived_from, function(src) any(src %in% c(objs, found)), logical(1))
+    new <- setdiff(names(derived_from)[hit], c(objs, found))
+    if (length(new) == 0) break
+    found <- c(found, new)
+  }
+  found
 }
 
 #' What the LLM is told about the project when it asks

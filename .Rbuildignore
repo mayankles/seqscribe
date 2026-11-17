@@ -7,3 +7,5 @@
 ^projects$
 ^scratch$
 ^config\.local\.yml$
+^R/_disable_autoload\.R$
+^\.claude$

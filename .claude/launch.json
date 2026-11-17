@@ -1,0 +1,14 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "seqscribe",
+      "runtimeExecutable": "Rscript",
+      "runtimeArgs": [
+        "-e",
+        "if (!nzchar(Sys.which('pandoc'))) Sys.setenv(RSTUDIO_PANDOC = '/Applications/RStudio.app/Contents/Resources/app/quarto/bin/tools/aarch64'); shiny::runApp(port = 7465, launch.browser = FALSE)"
+      ],
+      "port": 7465
+    }
+  ]
+}

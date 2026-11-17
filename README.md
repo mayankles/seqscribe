@@ -6,7 +6,8 @@ into calls to a curated, editable library of analysis functions, keeps a running
 can read and edit, and stitches the results you choose into an R Markdown
 report.
 
-**Status:** first prototype, written but not yet run end to end. It covers
+**Status:** first prototype. It runs end to end from the manual form; the chat
+has not been tested against a local model yet. It covers
 one thin slice of bulk RNA-seq on the airway demo dataset: load data, build
 the sample table, QC, one DESeq2 contrast, and a report.
 
@@ -22,6 +23,10 @@ the sample table, QC, one DESeq2 contrast, and a report.
    ))
    BiocManager::install(c("DESeq2", "airway", "SummarizedExperiment"))
    ```
+
+   Rendering the report also needs pandoc. RStudio bundles a copy; when
+   launching from a terminal, install pandoc or point `RSTUDIO_PANDOC` at
+   RStudio's copy.
 
 2. In LM Studio, load a model that supports tool use, set its context length
    to about 16k, and start the local server (default address

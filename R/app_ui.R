@@ -37,7 +37,8 @@ app_ui <- function(cfg) {
       ),
       bslib::navset_card_tab(
         title = "Project",
-        bslib::nav_panel("Results", shiny::uiOutput("results_feed")),
+        # The plain div stops the fill layout from squashing the result cards.
+        bslib::nav_panel("Results", shiny::div(shiny::uiOutput("results_feed"))),
         bslib::nav_panel("Sample table", shiny::tableOutput("sample_table")),
         bslib::nav_panel("Script", shiny::verbatimTextOutput("script")),
         bslib::nav_panel(
@@ -49,7 +50,9 @@ app_ui <- function(cfg) {
       ),
       bslib::card(
         bslib::card_header("Assistant"),
-        shinychat::chat_ui("chat", messages = greeting, fill = TRUE)
+        shinychat::chat_ui("chat", greeting = greeting, fill = TRUE,
+                           # No file attachments: the LLM never sees raw data.
+                           allow_attachments = FALSE)
       )
     )
   )

@@ -11,6 +11,9 @@ app_server <- function(input, output, session, cfg) {
     pkg_file("workflows", paste0(cfg$workflows$default %||% "bulk_rnaseq", ".yml"))
   )
   entries <- select_entries(lib$entries, workflow$name)
+  # Offer functions in workflow order, in the manual form and to the LLM.
+  step_ids <- vapply(workflow$steps, function(ws) ws$id, "")
+  entries <- entries[order(match(vapply(entries, function(e) e$step, ""), step_ids))]
   state <- new_state(cfg, entries)
 
   # Bumped whenever the project changes, so outputs know to redraw.
@@ -67,10 +70,14 @@ app_server <- function(input, output, session, cfg) {
       ))
       return()
     }
+    # shinychat sends a string, or a list of content objects if attachments
+    # are enabled; accept both.
+    user_input <- input$chat_user_input
+    if (!is.list(user_input)) user_input <- list(user_input)
     response <- if (isTRUE(cfg$llm$stream)) {
-      chat$stream_async(input$chat_user_input)
+      chat$stream_async(!!!user_input)
     } else {
-      chat$chat_async(input$chat_user_input)
+      chat$chat_async(!!!user_input)
     }
     done <- shinychat::chat_append("chat", response)
     promises::then(
@@ -181,7 +188,7 @@ app_server <- function(input, output, session, cfg) {
   # ---- Report --------------------------------------------------------------
   shiny::observe({
     refresh()
-    ids <- names(state$steps)
+    ids <- names(state$steps) %||% character()
     labels <- vapply(state$steps, function(s) paste0(s$id, " · ", s$title), "")
     shiny::updateCheckboxGroupInput(
       session, "report_steps",

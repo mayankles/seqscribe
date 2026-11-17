@@ -7,3 +7,4 @@ if (requireNamespace("seqscribe", quietly = TRUE)) {
   pkgload::load_all(".")
   run_app()
 }
+

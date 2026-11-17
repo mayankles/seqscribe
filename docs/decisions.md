@@ -2,6 +2,53 @@
 
 Newest first. Each entry: the decision, then the reason.
 
+## 2026-11-16 (first run): what running the prototype showed
+
+Run on R 4.6.1 with ellmer 0.5.2, shinychat 0.5.0, shiny 1.14.0, DESeq2
+1.52.0. The tests pass, the demo runs through `run_step()`, the generated
+`run_all.R` runs on its own, the report renders, and the app runs the demo
+from the manual form with no LLM server. The chat has not been tested yet.
+
+Fixed:
+
+- **The session died on load.** The report-steps observer called `setNames()`
+  on `NULL` when no steps existed.
+- **Result cards were squashed to their headers** by the fill layout; the
+  results feed is now wrapped in a plain div.
+- **`shiny::runApp()` sourced `R/` itself** as well as `app.R` loading the
+  package. `R/_disable_autoload.R` turns that off (the golem convention).
+- **shinychat 0.5.0 deprecated `chat_ui(messages =)`;** now `greeting =`.
+- **Functions are offered in workflow order,** not alphabetically, in the
+  manual form and to the LLM.
+
+Decided after the first run:
+
+- **Replacing an object removes everything derived from it.** The runner
+  records what each object was made from (the producing entry's `inputs`).
+  When a step replaces an object, objects derived from the old one are
+  dropped, and the user and the model are told which. Reason: rebuilding the
+  sample table used to leave the old `dds` and `de_results` in place, so
+  later plots silently used the old design; only the system prompt asked for
+  a rebuild. An object updated from itself (`dds` in `run_deseq2`) keeps its
+  ancestry. Later steps then fail with "Missing input: ... (run X first)".
+- **A design that cannot be fitted is an error, not a warning**
+  (`set_sample_table` 0.2.0). A covariate with one value, or a design that is
+  not full rank, fails the step and leaves the sample table unchanged. Groups
+  without replicates remain a warning.
+
+Found and left open (each needs a decision, not just a fix):
+
+- **Methods text is filled from the arguments, not the result.** With no
+  `reference_level` given, the report says "reference level: none" while R
+  used the first level alphabetically. Methods text should be able to use
+  values from the step's `summary`.
+- **The generated script saves nothing.** It recomputes objects and plots but
+  writes no files, so results cannot be regenerated without the app.
+- **Rendering the report needs pandoc on the PATH.** On the Mac it exists only
+  inside RStudio; launched outside RStudio the app writes the Rmd and stops.
+  Set `RSTUDIO_PANDOC` or install pandoc.
+- **Every browser session creates a project folder,** even if nothing runs.
+
 ## 2026-11-16 (later): prototype implementation choices
 
 - **Project state is a plain environment per session,** with a counter the UI

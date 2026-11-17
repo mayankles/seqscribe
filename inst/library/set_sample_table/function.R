@@ -35,18 +35,18 @@ set_sample_table <- function(raw_metadata, counts, condition_column,
       paste(names(group_sizes)[group_sizes < 2], collapse = ", ")
     ))
   }
+  # A design that cannot be fitted is an error: the sample table is not stored.
   design <- stats::as.formula(paste("~", paste(c(covariates, "condition"), collapse = " + ")))
-  mm <- tryCatch(stats::model.matrix(design, data = droplevels(used)), error = function(e) NULL)
-  if (is.null(mm)) {
-    warnings <- c(warnings, paste(
-      "The design could not be built; a covariate probably has only one",
-      "value among the included samples. Remove it."
-    ))
-  } else if (qr(mm)$rank < ncol(mm)) {
-    warnings <- c(warnings, paste(
-      "The design is not full rank: a covariate is confounded with the",
-      "condition or with another covariate. Remove or change a covariate."
-    ))
+  constant <- covariates[vapply(covariates, function(cv) length(unique(used[[cv]])) < 2, logical(1))]
+  if (length(constant) > 0) {
+    stop("Covariate(s) with only one value among the included samples: ",
+         paste(constant, collapse = ", "), ". Remove them from covariates.")
+  }
+  mm <- stats::model.matrix(design, data = droplevels(used))
+  if (qr(mm)$rank < ncol(mm)) {
+    stop("The design ", paste(deparse(design), collapse = ""), " is not full rank: ",
+         "a covariate is confounded with the condition or with another covariate. ",
+         "Remove or change a covariate.")
   }
 
   list(

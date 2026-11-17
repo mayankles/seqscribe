@@ -121,9 +121,11 @@ It never starts or owns the LLM server, and never hard-codes a provider.
 
 ## Current state (2026-11-16)
 
-- First prototype written (2026-11-16) but **not yet run end to end**: it was
-  written without access to R, and only syntax-checked. Expect small bugs on
-  first launch; fix them and note anything structural in `docs/decisions.md`.
+- First prototype written (2026-11-16) and **run end to end without the LLM**:
+  tests pass, the demo runs through `run_step()` and through the app's manual
+  form, the generated script runs on its own and the report renders. **The
+  chat has not been tested against a local model yet.** What the first run
+  found, fixed and left open is in `docs/decisions.md` ("first run").
 - What the prototype implements:
   - Library loader with checks and layers (`R/library.R`), and eight built-in
     entries: `load_demo_airway`, `set_sample_table`, `build_dds`,
@@ -158,8 +160,9 @@ It never starts or owns the LLM server, and never hard-codes a provider.
 ## Handoff: first tasks
 
 The prototype was written in a session with no R and no access to the local
-LLM. Nothing has been executed. Work through these in order, and keep changes
-small until the demo runs end to end.
+LLM. **Tasks 1 to 5 are done (2026-11-16); 6 and 7 remain** and need the LM
+Studio server running. The ellmer argument names used in `llm_client()` and
+`library_as_tools()` match ellmer 0.5.2, but no call has been made yet.
 
 1. `git init` and make the first commit if the repo has no history yet.
 2. Install the packages listed in `README.md`.
