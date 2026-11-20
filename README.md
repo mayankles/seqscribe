@@ -68,7 +68,10 @@ methods text from each library entry (top of the report shown).
 
 The app has three panels: the workflow map and a manual "run a function" form
 on the left, the project (results, sample table, script, report) in the
-centre, and the assistant on the right. Each session creates a new folder
+centre, and the assistant on the right. Above the results is a code box
+for your own R code (Ctrl/Cmd+Enter runs it, Up/Down recall earlier
+commands); project objects such as `dds` and `de_results` can be read but
+not changed there, and each run is recorded in the script. Each session creates a new folder
 under `projects/` holding the spec, the generated script, results and report.
 
 If the assistant is not connected, a banner says why, and the manual form

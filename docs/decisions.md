@@ -2,6 +2,30 @@
 
 Newest first. Each entry: the decision, then the reason.
 
+## 2026-11-19: code cell (first version of open mode)
+
+Hands-on use showed the main gap was inspecting objects and making quick
+plots, so the first custom-code feature is a console-like code box above the
+results, not a notebook.
+
+- **Each successful run is a custom step** (`type: custom` in the spec,
+  with its code), interleaved with library steps in run order, and appears
+  in the script, the results feed and the report. Failed runs are shown but
+  not recorded. The spec's separate `custom_blocks` list was dropped.
+- **Project objects are read-only from a cell.** They are visible by name;
+  a cell that assigns one fails and is not recorded. Reason: only library
+  steps change project objects, so the recorded script reproduces the app's
+  state and the stale-object tracking stays correct. Variables a cell
+  creates persist for later cells.
+- **Output never goes to the LLM.**
+- **History is browser-side** (Up/Down on the first or last line), for the
+  current page load only. Reason: no server cost, and a page reload starts a
+  new project anyway.
+- **Runs in the app's own R process,** like library steps, so a long cell
+  blocks the app. Acceptable for inspection; revisit with the executor.
+- Built on a Shiny-free core (`run_custom()` in `R/custom.R`), the
+  groundwork for using a project from the R console.
+
 ## 2026-11-19: plot options from older helper functions
 
 Options taken from Mayank's older helpers (`makePCAplot_MT`, `makeVolcano`),

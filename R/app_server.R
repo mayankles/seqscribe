@@ -147,6 +147,23 @@ app_server <- function(input, output, session, cfg) {
     bump()
   })
 
+  # ---- Code cell -------------------------------------------------------------
+  code_result <- shiny::reactiveVal(NULL)
+  shiny::observeEvent(input$code_run, {
+    res <- run_custom(state, input$code_run$code)
+    code_result(res)
+    bump()
+  })
+  output$code_error <- shiny::renderUI({
+    res <- code_result()
+    if (is.null(res) || isTRUE(res$ok)) return(NULL)
+    shiny::div(
+      class = "alert alert-danger small py-2 mt-2 mb-0",
+      shiny::strong(res$error), " Press Up in the code box to edit and retry. Not recorded.",
+      if (nzchar(res$output %||% "")) shiny::pre(class = "small mb-0 mt-1", res$output)
+    )
+  })
+
   # ---- Centre panel --------------------------------------------------------
   output$results_feed <- shiny::renderUI({
     refresh()
@@ -154,14 +171,19 @@ app_server <- function(input, output, session, cfg) {
       return(shiny::div(class = "text-muted p-3", "Nothing has been run yet. Results appear here, newest first."))
     }
     cards <- lapply(rev(unname(state$steps)), function(s) {
+      custom <- is_custom(s)
       bslib::card(
         class = "mb-3",
-        bslib::card_header(paste0(s$id, " · ", s$title)),
+        bslib::card_header(
+          paste0(s$id, " · ", s$title),
+          if (custom) shiny::span(class = "badge bg-info text-dark ms-1", "custom")
+        ),
         shiny::pre(class = "small mb-2", paste(s$code, collapse = "\n")),
-        if (!is.null(s$plot)) shiny::img(src = paste0(prefix, "/", s$plot), style = "max-width: 100%; height: auto;"),
+        if (!is.null(s$output)) shiny::pre(class = "small mb-2 bg-light p-2", s$output),
+        lapply(s$plot, function(p) shiny::img(src = paste0(prefix, "/", p), style = "max-width: 100%; height: auto;")),
         if (!is.null(s$table_html)) shiny::div(style = "overflow-x: auto;", shiny::HTML(s$table_html)),
         if (isTRUE(s$n_table_rows > 10)) shiny::div(class = "small text-muted", paste0("First 10 of ", s$n_table_rows, " rows. Full table: ", s$table)),
-        shiny::tags$details(
+        if (!custom) shiny::tags$details(
           shiny::tags$summary(class = "small", "Summary sent to the assistant"),
           shiny::pre(class = "small", as.character(jsonlite::toJSON(s$summary, auto_unbox = TRUE, pretty = TRUE, null = "null", force = TRUE)))
         )

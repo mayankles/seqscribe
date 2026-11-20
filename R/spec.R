@@ -22,13 +22,18 @@ spec_build <- function(state) {
     mode = state$cfg$mode,
     llm = list(model = state$cfg$llm$model, base_url = state$cfg$llm$base_url),
     samples = samples,
+    # Library calls and custom code cells, in the order they ran.
     steps = lapply(unname(state$steps), function(s) {
-      list(
-        id = s$id, fn = s$fn, fn_version = s$version, fn_hash = s$hash,
-        layer = s$layer, params = s$params, status = "done", time = s$time
-      )
-    }),
-    custom_blocks = list()
+      if (is_custom(s)) {
+        list(id = s$id, type = "custom", code = paste(s$code, collapse = "\n"),
+             status = "done", time = s$time)
+      } else {
+        list(
+          id = s$id, type = "library", fn = s$fn, fn_version = s$version, fn_hash = s$hash,
+          layer = s$layer, params = s$params, status = "done", time = s$time
+        )
+      }
+    })
   )
 }
 

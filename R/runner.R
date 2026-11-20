@@ -204,6 +204,7 @@ run_step <- function(state, fn, params = list(), session = NULL) {
 
   step <- list(
     id = step_id,
+    type = "library",
     fn = fn,
     title = entry$title,
     workflow_step = entry$step,
@@ -223,10 +224,7 @@ run_step <- function(state, fn, params = list(), session = NULL) {
   )
   state$steps[[step_id]] <- step
 
-  tryCatch({
-    spec_write(state)
-    writeLines(build_script(state), file.path(state$project_dir, "scripts", "run_all.R"))
-  }, error = function(e) notify(session, paste("Could not save project files:", conditionMessage(e)), type = "warning"))
+  save_project_files(state, session)
 
   for_llm <- list(status = "ok", step_id = step_id, result = out$summary)
   if (length(dropped) > 0) {
@@ -253,6 +251,16 @@ dependents <- function(derived_from, objs) {
     found <- c(found, new)
   }
   found
+}
+
+#' Write the spec and the script after every change
+#' @noRd
+save_project_files <- function(state, session = NULL) {
+  tryCatch({
+    spec_write(state)
+    writeLines(build_script(state), file.path(state$project_dir, "scripts", "run_all.R"))
+  }, error = function(e) notify(session, paste("Could not save project files:", conditionMessage(e)), type = "warning"))
+  invisible()
 }
 
 #' What the LLM is told about the project when it asks

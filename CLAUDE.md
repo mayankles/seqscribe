@@ -138,8 +138,11 @@ It never starts or owns the LLM server, and never hard-codes a provider.
   - Tools generated from library entries, plus `get_project_state`.
   - Script builder (`R/script.R`), spec writer (`R/spec.R`), report builder
     (`R/report.R`), three-panel UI.
-- Not implemented yet: guided versus open mode (the prototype is effectively
-  guided: there are no custom blocks), the promotion path, resuming a project
+  - A code cell above the results (`R/custom.R`, `R/code_cell.R`): the
+    user's own R code against the project, recorded as custom steps. Hidden
+    and refused when `mode` is `guided`. Project objects are read-only from
+    a cell. Up/Down recall earlier commands (browser-side history).
+- Not implemented yet: LLM-written custom blocks, the promotion path, resuming a project
   from its spec, the free-text and GEO sample parser (`set_sample_table` is a
   column-picking stand-in), editable sample table, background execution
   (steps run in the app's own R process and block it), version-mismatch
@@ -206,14 +209,10 @@ library.
 
 ## Roadmap after the prototype
 
-0. **Next up: a code cell in the app** (decided 2026-11-19). Hands-on use
-   showed the main gap is inspecting objects and making quick plots, not
-   adding analysis steps. A code box that runs in the project's state
-   environment and shows output and plots as a result card; each run is
-   recorded as a custom block in the script and spec. This is the first
-   version of `open` mode. It needs the core (state, runner, spec) usable
-   without Shiny, which is also the groundwork for using a project from the
-   R console later.
+0. ~~A code cell in the app~~ (done 2026-11-19, first version of `open`
+   mode). Possible follow-ups: using a project from the R console (the core
+   in `R/runner.R` and `R/custom.R` is already Shiny-free), running cells in
+   a background process so a long cell does not block the app.
 1. Flesh out the bulk RNA-seq function library and standardise it; build the
    promotion path (custom block to library entry).
 2. Build an evaluation set: 15 to 20 GEO series with hand-curated sample

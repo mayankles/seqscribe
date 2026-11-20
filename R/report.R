@@ -19,10 +19,14 @@ build_report <- function(state, step_ids) {
 
   body <- character()
   for (s in steps) {
-    block <- c("", paste0("## ", s$title), "", s$methods, "",
+    title <- if (is_custom(s)) paste0(s$title, " (", s$id, ")") else s$title
+    block <- c("", paste0("## ", title), "", s$methods, "",
                "```{r, eval=FALSE}", s$code, "```", "")
-    if (!is.null(s$plot)) {
-      block <- c(block, paste0("![](", file.path("..", s$plot), ")"), "")
+    if (!is.null(s$output)) {
+      block <- c(block, "```", s$output, "```", "")
+    }
+    for (plot in s$plot) {
+      block <- c(block, paste0("![](", file.path("..", plot), ")"), "")
     }
     if (!is.null(s$table)) {
       block <- c(

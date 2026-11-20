@@ -38,7 +38,10 @@ app_ui <- function(cfg) {
       bslib::navset_card_tab(
         title = "Project",
         # The plain div stops the fill layout from squashing the result cards.
-        bslib::nav_panel("Results", shiny::div(shiny::uiOutput("results_feed"))),
+        bslib::nav_panel("Results", shiny::div(
+          if (!identical(cfg$mode, "guided")) code_cell_ui(),
+          shiny::uiOutput("results_feed")
+        )),
         bslib::nav_panel("Sample table", shiny::tableOutput("sample_table")),
         bslib::nav_panel("Script", shiny::verbatimTextOutput("script")),
         bslib::nav_panel(
