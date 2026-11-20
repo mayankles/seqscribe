@@ -206,6 +206,14 @@ library.
 
 ## Roadmap after the prototype
 
+0. **Next up: a code cell in the app** (decided 2026-11-19). Hands-on use
+   showed the main gap is inspecting objects and making quick plots, not
+   adding analysis steps. A code box that runs in the project's state
+   environment and shows output and plots as a result card; each run is
+   recorded as a custom block in the script and spec. This is the first
+   version of `open` mode. It needs the core (state, runner, spec) usable
+   without Shiny, which is also the groundwork for using a project from the
+   R console later.
 1. Flesh out the bulk RNA-seq function library and standardise it; build the
    promotion path (custom block to library entry).
 2. Build an evaluation set: 15 to 20 GEO series with hand-curated sample

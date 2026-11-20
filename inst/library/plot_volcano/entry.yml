@@ -1,12 +1,12 @@
 name: plot_volcano
-version: 0.1.0
+version: 0.2.0
 title: Volcano plot
-summary: Volcano plot of the most recent differential expression results, highlighting genes that pass the significance and fold-change thresholds.
-tags: [differential expression, volcano, plot, de]
+summary: Volcano plot of the most recent differential expression results, highlighting genes that pass the significance and fold-change thresholds, with the most significant genes labelled.
+tags: [differential expression, volcano, plot, de, labels]
 workflow: [bulk_rnaseq]
 step: de
 description: Log2 fold change against adjusted p-value for every tested gene.
-requires: [ggplot2]
+requires: [ggplot2, ggrepel]
 inputs: [de_results]
 params:
   - name: alpha
@@ -21,7 +21,19 @@ params:
     min: 0
     max: 10
     description: Absolute log2 fold change threshold.
+  - name: label_top
+    type: integer
+    default: 5
+    min: 0
+    max: 100
+    description: Number of the most significant highlighted genes to label in each direction chosen by label_direction, by adjusted p-value (so 5 with "both" labels 10 genes). 0 for none. Labels use gene symbols when the results have a symbol column, otherwise gene IDs.
+  - name: label_direction
+    type: string
+    values: [both, up, down]
+    default: both
+    description: Which highlighted genes to label - up-regulated, down-regulated, or both (label_top genes each).
 produces: []
 methods_text: >
   Genes with adjusted p-value below {{alpha}} and absolute log2 fold change
-  above {{lfc_threshold}} were highlighted.
+  above {{lfc_threshold}} were highlighted. The {{label_top}} most significant highlighted genes in each
+  labelled direction ({{label_direction}}) were labelled.

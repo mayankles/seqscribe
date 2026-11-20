@@ -2,6 +2,31 @@
 
 Newest first. Each entry: the decision, then the reason.
 
+## 2026-11-19: plot options from older helper functions
+
+Options taken from Mayank's older helpers (`makePCAplot_MT`, `makeVolcano`),
+rewritten to the library contract; the helpers themselves are not imported.
+
+- **`plot_pca` 0.3.0 computes the PCA itself** with `prcomp()` on the same
+  top-variable genes DESeq2's `plotPCA` uses, because `plotPCA` returns only
+  PC1 and PC2. New options: any two components, sample labels, 95% ellipses
+  per colour group (skipped, with a note, for groups under 3 samples),
+  loading arrows for the top genes, and scaling. **Scaling is off by
+  default** to match DESeq2; the old helper scaled by default. The summary
+  now includes the top loading genes for both components. The `ntop` limit
+  was raised to 100000 (0.2.1) so a large value means all genes.
+- **`plot_volcano` 0.2.0 labels the most significant genes:** `label_top`
+  per direction, with `label_direction` choosing up, down or both (default:
+  top 5 up and top 5 down).
+  It uses a `symbol` column when the results have one, else gene IDs, so a
+  later gene-annotation entry makes labels readable without changing it.
+- Not taken: plotly output, automatic fold-change column detection, and the
+  helpers' own file saving (the runner saves results).
+- Deferred, with prerequisites: gene annotation (symbols, Entrez IDs);
+  Reactome enrichment with top-level categories (needs annotation, several
+  contrasts per project and an offline Reactome file); Venn or UpSet overlap
+  of DE gene sets (needs several contrasts).
+
 ## 2026-11-19: first chat runs
 
 The five demo requests from the chat greeting, sent through the chat three

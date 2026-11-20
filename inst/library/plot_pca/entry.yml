@@ -1,14 +1,17 @@
 name: plot_pca
-version: 0.2.0
+version: 0.3.0
 title: PCA of samples
-summary: Principal component plot of samples to check grouping, outliers and batch effects.
-tags: [qc, pca, outliers, batch, exploratory]
+summary: Principal component plot of samples to check grouping, outliers and batch effects. Can show any two components, sample labels, group ellipses and the genes that drive the components.
+tags: [qc, pca, outliers, batch, exploratory, loadings, biplot]
 workflow: [bulk_rnaseq]
 step: qc
 description: >
   Principal component analysis of variance-stabilised counts, to check that
-  samples group as expected and to spot outliers or batch effects.
-requires: [DESeq2, ggplot2, rlang]
+  samples group as expected and to spot outliers or batch effects. Uses the
+  most variable genes, as DESeq2's plotPCA does, but can plot any pair of
+  components and overlay sample labels, 95% ellipses per group and the
+  genes with the largest loadings.
+requires: [DESeq2, ggplot2, ggrepel, rlang, SummarizedExperiment]
 inputs: [dds]
 params:
   - name: color_by
@@ -24,9 +27,40 @@ params:
     type: integer
     default: 500
     min: 100
-    max: 5000
-    description: Number of most variable genes to use.
+    max: 100000
+    description: Number of most variable genes to use. A value above the number of genes uses all genes.
+  - name: pc_x
+    type: integer
+    default: 1
+    min: 1
+    max: 20
+    description: Principal component on the x axis.
+  - name: pc_y
+    type: integer
+    default: 2
+    min: 1
+    max: 20
+    description: Principal component on the y axis.
+  - name: label_samples
+    type: boolean
+    default: false
+    description: Label each point with its sample ID.
+  - name: ellipses
+    type: boolean
+    default: false
+    description: Draw a 95% normal ellipse around each colour group (groups need at least 3 samples).
+  - name: n_loadings
+    type: integer
+    default: 0
+    min: 0
+    max: 50
+    description: Number of genes with the largest loadings on the two plotted components to draw as arrows (a biplot). 0 for none.
+  - name: scale
+    type: boolean
+    default: false
+    description: Scale each gene to unit variance before PCA. The default (false) matches DESeq2's plotPCA.
 produces: []
 methods_text: >
-  Principal component analysis was performed on variance-stabilised counts of
-  the {{ntop}} most variable genes.
+  Principal component analysis (prcomp) was performed on variance-stabilised
+  counts of the {{ntop}} most variable genes (all genes, if fewer), with genes
+  scaled to unit variance: {{scale}}. Components {{pc_x}} and {{pc_y}} are shown.
