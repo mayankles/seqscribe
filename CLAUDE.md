@@ -119,13 +119,15 @@ recording the change in `docs/decisions.md`.
 The app reads an LLM base URL, model name and optional API key from config.
 It never starts or owns the LLM server, and never hard-codes a provider.
 
-## Current state (2026-11-16)
+## Current state (2026-11-19)
 
-- First prototype written (2026-11-16) and **run end to end without the LLM**:
-  tests pass, the demo runs through `run_step()` and through the app's manual
-  form, the generated script runs on its own and the report renders. **The
-  chat has not been tested against a local model yet.** What the first run
-  found, fixed and left open is in `docs/decisions.md` ("first run").
+- First prototype written (2026-11-16) and **run end to end**, from the
+  manual form and from the chat with `openai/gpt-oss-20b` in LM Studio
+  (2026-11-19): tests pass, the generated script runs on its own and the
+  report renders. The model completed the five demo requests correctly in
+  three of three runs, but also ran a step it was not asked for. What the
+  first runs found, fixed and left open is in `docs/decisions.md` ("first
+  run" and "first chat runs"). Screenshots are in `README.md`.
 - What the prototype implements:
   - Library loader with checks and layers (`R/library.R`), and eight built-in
     entries: `load_demo_airway`, `set_sample_table`, `build_dds`,
@@ -160,9 +162,10 @@ It never starts or owns the LLM server, and never hard-codes a provider.
 ## Handoff: first tasks
 
 The prototype was written in a session with no R and no access to the local
-LLM. **Tasks 1 to 5 are done (2026-11-16); 6 and 7 remain** and need the LM
-Studio server running. The ellmer argument names used in `llm_client()` and
-`library_as_tools()` match ellmer 0.5.2, but no call has been made yet.
+LLM. **All seven tasks are done** (1 to 5 on 2026-11-16, 6 and 7 on
+2026-11-19), though task 7 covers only `gpt-oss-20b` on the scripted five
+requests; Gemma and error recovery in the chat are untested. Kept here as a
+record and as a checklist for setting up a new machine.
 
 1. `git init` and make the first commit if the repo has no history yet.
 2. Install the packages listed in `README.md`.
@@ -189,8 +192,9 @@ Studio server running. The ellmer argument names used in `llm_client()` and
 
 A thin end-to-end slice whose purpose is to get a feel for the GUI and to test
 whether a local model can reliably pick the right function and arguments.
-The immediate next step is to run it, fix what breaks, and note how well the
-local model handles the five demo requests shown in the chat greeting.
+It now runs end to end, from the manual form and from the chat. The next
+step is to decide, from hands-on use, what to change before growing the
+library.
 
 - **Layout:** step navigator on the left, results in the centre, chat on the
   right, a tab for the running script.

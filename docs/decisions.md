@@ -2,12 +2,37 @@
 
 Newest first. Each entry: the decision, then the reason.
 
+## 2026-11-19: first chat runs
+
+The five demo requests from the chat greeting, sent through the chat three
+times with `openai/gpt-oss-20b` in LM Studio (16k context, temperature 0,
+no streaming). Each request took 11 to 21 seconds.
+
+- **Fixed: every chat message crashed the app.** shinychat 0.5.0 can send the
+  input as a list of content objects instead of a string; the handler now
+  accepts both and passes them to ellmer with `!!!`. File attachments are
+  turned off in the chat, because the LLM must never see raw data.
+- **Function and argument choice was right in all three runs:** `dex` as the
+  condition, `untrt` as the reference, `cell` as the covariate, PCA coloured
+  by cell, `trt` versus `untrt`. Numbers it quoted came from the summaries.
+- **It ran a step it was not asked for,** in all three runs: after the sample
+  table request it also ran `build_dds`. The system prompt forbids this; a
+  prompt rule alone does not hold.
+- **It interprets beyond the numbers,** for example calling the cell-line
+  separation on PC2 "a strong batch effect". Whether interpretation in chat
+  is allowed, and how it is labelled, is not decided yet.
+- **After loading data it asked which column to compare** instead of
+  proposing `dex` from the metadata summary.
+- Not yet tested: Gemma 4 12B, error recovery through the chat, ambiguous or
+  out-of-library requests.
+
 ## 2026-11-16 (first run): what running the prototype showed
 
 Run on R 4.6.1 with ellmer 0.5.2, shinychat 0.5.0, shiny 1.14.0, DESeq2
 1.52.0. The tests pass, the demo runs through `run_step()`, the generated
 `run_all.R` runs on its own, the report renders, and the app runs the demo
-from the manual form with no LLM server. The chat has not been tested yet.
+from the manual form with no LLM server. The chat was tested on 2026-11-19
+(next entry).
 
 Fixed:
 
